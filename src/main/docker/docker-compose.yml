@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  db:
+    image: 'postgres:13.7-alpine'
+    container_name: db
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=later
+    ports:
+      - '5432:5432'
+
+  web:
+    image: 'users-handler-service:latest'
+    build:
+      context: .
+    container_name: web
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/later
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    ports:
+      - '8080:8080'
